@@ -1,4 +1,4 @@
-import pygame, pymunk, sys
+import pygame, pymunk, random
 
 
 
@@ -23,6 +23,7 @@ class Ball():
         self.radio = 20
         self.body = pymunk.Body(1, 100, body_type=pymunk.Body.DYNAMIC)
         self.body.position = pos
+        self.body.velocity = (random.randint(25,100), random.randint(0,50))
         self.shape = pymunk.Circle(self.body, radius=self.radio)
         self.shape.collision_type = 1
         self.shape.elasticity = 0.9

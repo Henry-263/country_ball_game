@@ -1,41 +1,22 @@
 import pygame, pymunk, sys, json, random
 from class_ball import Ball
 from class_wall import Wall
+from levels import return_levels
 
 def create_world(space):
     if Wall.lista_objetos:
         for wall in Wall.lista_objetos:
             space.remove(wall.shape, wall.body)
-            Wall.lista_objetos.remove(wall)
+        Wall.lista_objetos.clear()
 
     # Crear muros: (posicion), grosor, altura, angulo, kill
-    levels = [
-        {
-        1:[(960, 1030), 200, 100, 0, True],
-        2: [(25, 540), 50, 1080, 0, False],
-        3:[(400, 600), 50, 1080, -60, False],
-        4:[(1895, 540), 50, 1080, 0, False],
-        5:[(1520, 600), 50, 1080, 60, False],
-        6:[(855, 973), 50, 250, 0, False],
-        7:[(1064, 973), 50, 250, 0, False],
-        },
-        {
-        1: [(960, 1030), 1820, 100, 0, True],
-        2: [(25, 540), 50, 1080, 0, False],
-        3: [(1895, 540), 50, 1080, 0, False],
-        4: [(450, 300), 900, 50, 20, False],
-        5: [(1470, 300), 900, 50, -20, False],
-        6: [(450, 650), 900, 50, 20, False],
-        7: [(1470, 650), 900, 50, -20, False],
-        8: [(960, 1150), 2000, 50, 0, True],
-        }
-    ]
+    levels = return_levels()
 
-    #level = random.randint(0, len(levels) - 1)
-    level = 1
+    level = random.randint(0, len(levels) - 1)
+    #level = 4
 
     for num in levels[level]:
-            Wall(space, levels[level][num][0], levels[level][num][1], levels[level][num][2], levels[level][num][3], levels[level][num][4])
+            Wall(space, levels[level][num][0], levels[level][num][1], levels[level][num][2], levels[level][num][3], levels[level][num][4], levels[level][num][5])
 
 def eliminar_obj(arbiter, space, data):
 
@@ -52,9 +33,18 @@ def eliminar_obj(arbiter, space, data):
 def spawn_balls(space, countries):
 
     i = 0
-    for country in countries[0]:
-        Ball(space, (50*i+250, 50), countries[0][country], country)
+    aux_countries = list(countries[0].items())
+    random.shuffle(aux_countries)
+    x = True
+    for country in aux_countries:
+        if x:
+            Ball(space, (50*i+100, 50), country[1], country[0])
+        else:
+            Ball(space, (50*i+100, 100), country[1], country[0])
         i += 1
+        if i > 30:
+            i = 0
+            x = False
     return i
 
 
