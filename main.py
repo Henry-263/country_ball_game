@@ -1,6 +1,6 @@
 import pygame, pymunk, sys, json, random
 from class_ball import Ball
-from class_wall import Wall
+from class_wall import Wall, Moving_Wall
 from levels import return_levels
 
 def create_world(space):
@@ -12,11 +12,14 @@ def create_world(space):
     # Crear muros: (posicion), grosor, altura, angulo, kill
     levels = return_levels()
 
-    level = random.randint(0, len(levels) - 1)
-    #level = 4
+    #level = random.randint(0, len(levels) - 1)
+    level = 6
 
     for num in levels[level]:
+        if isinstance(num, int):
             Wall(space, levels[level][num][0], levels[level][num][1], levels[level][num][2], levels[level][num][3], levels[level][num][4], levels[level][num][5])
+        else:
+            Moving_Wall(space, levels[level][num][0], levels[level][num][1], levels[level][num][2], levels[level][num][6], levels[level][num][7], levels[level][num][8], levels[level][num][3], levels[level][num][4], levels[level][num][5])
 
 def eliminar_obj(arbiter, space, data):
 
@@ -94,9 +97,10 @@ if __name__ == "__main__":
 
 
         screen.fill((50,50,50))  # Rellenamos la pantalla de negro
+
+        Moving_Wall.move_walls()
         Ball.draw(screen, countries)
         Wall.draw(screen)
-
         space.step(1/50)
         pygame.display.flip()
         clock.tick(165)

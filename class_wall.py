@@ -5,11 +5,12 @@ from math import radians
 class Wall():
     lista_objetos = []
     def __init__(self, space, pos, width, height, angle=0, kill = False, polig = 'Rectangle'):
+        self.pos = pos
         self.polig = polig
         self.angle = angle
         self.width = width
         self.height = height
-        self.body = pymunk.Body(body_type=pymunk.Body.STATIC)
+        self.body = pymunk.Body(body_type=pymunk.Body.KINEMATIC)
         self.body.position = pos
         self.body.angle = radians(angle)
         if self.polig == 'Circle':
@@ -39,3 +40,21 @@ class Wall():
                     pygame.draw.polygon(screen, (150, 150, 150), puntos)
                 else:
                     pygame.draw.polygon(screen, (220, 0, 0), puntos)
+
+class Moving_Wall(Wall):
+    lista_objetos = []
+    def __init__(self, space, pos, width, height, final_pos_r, final_pos_l, vel, angle=0, kill = False, polig = 'Rectangle'):
+        Wall.__init__(self, space, pos, width, height, angle, kill, polig)
+        self.final_pos_r = final_pos_r
+        self.final_pos_l = final_pos_l
+        self.vel = vel
+        Moving_Wall.lista_objetos.append(self)
+
+    @classmethod
+    def move_walls(self):
+        for obj in Moving_Wall.lista_objetos:
+            if (obj.body.position[0] >= obj.final_pos_r[0] and obj.vel > 0) or (obj.body.position[0] <= obj.final_pos_l[0] and obj.vel < 0):
+                obj.vel *= -1
+            obj.body.velocity = (obj.vel, 0)
+            if obj.angle:
+                obj.body.angle += radians(obj.angle)
