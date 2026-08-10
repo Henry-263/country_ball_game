@@ -1,4 +1,4 @@
-import pygame, pymunk, random
+import pygame, pymunk, random, json
 
 
 
@@ -38,8 +38,13 @@ class Ball():
             screen.blit(obj.sprite, (x - obj.radio, y - obj.radio))
         if len(Ball.lista_objetos) == 1:
             if len(countries[0]) == 1:
+                with open('winners.json', 'r', encoding='utf-8') as f:
+                    winners = json.load(f)
                 font = pygame.font.SysFont('comicsans', 80)
                 text = font.render(f'{Ball.lista_objetos[0].name} Won The Tournament', True, (0, 220, 0))
+                winners_text = []
+                for winner in winners:
+                    winners_text.append(font.render(winners[winner]['name'], True, (0, 220, 0)))
             else:
                 font = pygame.font.SysFont('comicsans', 60)
                 text = font.render(f'{Ball.lista_objetos[0].name} has been eliminated', True, (220, 0, 0))
