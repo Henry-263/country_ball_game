@@ -1,6 +1,7 @@
 import pygame, pymunk, sys, json, random
 from class_ball import Ball
 from class_wall import Wall, Moving_Wall
+from class_ranking import Ranking
 from levels import return_levels
 
 def create_world(space):
@@ -12,8 +13,8 @@ def create_world(space):
     # Crear muros: (posicion), grosor, altura, angulo, kill
     levels = return_levels()
 
-    #level = random.randint(0, len(levels) - 1)
-    level = 6
+    level = random.randint(0, len(levels) - 1)
+    #level = 6
 
     for num in levels[level]:
         if isinstance(num, int):
@@ -61,8 +62,11 @@ def last_ball(balls_num, tiempo):
 
 if __name__ == "__main__":
 
-    with open('balls.json', 'r', encoding='utf-8') as f:
+    with open('prueba.json', 'r', encoding='utf-8') as f:
         countries = json.load(f)
+
+    with open('winners.json', 'r', encoding='utf-8') as f:
+        previous_winners = json.load(f)
 
     pygame.init()
     screen = pygame.display.set_mode((1920,1080))  # La pantalla
@@ -73,34 +77,60 @@ if __name__ == "__main__":
     space = pymunk.Space()
     space.gravity = 0.0, 100.0
 
+    tournament_finished = False
     finish_game = True
     tiempo = None
     space.on_collision(collision_type_a=1, collision_type_b=2, begin=eliminar_obj)
+    state = 'game'
+
     while True:
-        if finish_game:
-            balls_num = spawn_balls(space, countries)
-            create_world(space)
-            finish_game = False
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
 
-        balls_num, tiempo  = last_ball(balls_num, tiempo)
+        if state == 'game':
 
-        if tiempo and (pygame.time.get_ticks() - tiempo >= 3000) and len(countries[0]) > 1:
-            tiempo = None
-            finish_game = True
-            del countries[0][(Ball.lista_objetos[0].name)]
-            space.remove(Ball.lista_objetos[0].shape, Ball.lista_objetos[0].body)
-            Ball.lista_objetos.remove(Ball.lista_objetos[0])
+            if finish_game:
+                balls_num = spawn_balls(space, countries)
+                create_world(space)
+                finish_game = False
+
+            balls_num, tiempo  = last_ball(balls_num, tiempo)
+
+            if tiempo and (pygame.time.get_ticks() - tiempo >= 3000) and len(countries[0]) > 1:
+                tiempo = None
+                finish_game = True
+                del countries[0][(Ball.lista_objetos[0].name)]
+                space.remove(Ball.lista_objetos[0].shape, Ball.lista_objetos[0].body)
+                Ball.lista_objetos.remove(Ball.lista_objetos[0])
+
+            if len(countries[0]) == 1:
+                state = 'winner'
+
+            screen.fill((50,50,50))  # Rellenamos la pantalla de negro
+
+            Moving_Wall.move_walls()
+            Ball.draw(screen, countries)
+            Wall.draw(screen)
+        else:
+            screen.fill((50, 50, 50))  # Rellenamos la pantalla de negro
+
+            if not tournament_finished:
+                name = list(countries[0].keys())[0]
+                if name in previous_winners:
+                    previous_winners[name] += 1
+                else:
+                    previous_winners[name] = 1
+                tournament_finished = True
+                with open("winners.json", "w", encoding="utf-8") as f:
+                    json.dump(previous_winners, f, ensure_ascii=False, indent=2)
 
 
-        screen.fill((50,50,50))  # Rellenamos la pantalla de negro
 
-        Moving_Wall.move_walls()
-        Ball.draw(screen, countries)
-        Wall.draw(screen)
+            ranking = Ranking(previous_winners, countries[0])
+            ranking.draw(screen)
+
         space.step(1/50)
         pygame.display.flip()
         clock.tick(165)
