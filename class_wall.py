@@ -57,4 +57,4 @@ class Moving_Wall(Wall):
                 obj.vel *= -1
             obj.body.velocity = (obj.vel, 0)
             if obj.angle:
-                obj.body.angle += radians(obj.angle)
+                obj.body.angular_velocity = radians(obj.angle)

@@ -13,8 +13,8 @@ def create_world(space):
     # Crear muros: (posicion), grosor, altura, angulo, kill
     levels = return_levels()
 
-    level = random.randint(0, len(levels) - 1)
-    #level = 6
+    #level = random.randint(0, len(levels) - 1)
+    level = 7
 
     for num in levels[level]:
         if isinstance(num, int):
@@ -62,7 +62,7 @@ def last_ball(balls_num, tiempo):
 
 if __name__ == "__main__":
 
-    with open('balls.json', 'r', encoding='utf-8') as f:
+    with open('prueba.json', 'r', encoding='utf-8') as f:
         countries = json.load(f)
 
     with open('winners.json', 'r', encoding='utf-8') as f:
