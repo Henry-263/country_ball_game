@@ -62,7 +62,7 @@ def last_ball(balls_num, tiempo):
 
 if __name__ == "__main__":
 
-    with open('prueba.json', 'r', encoding='utf-8') as f:
+    with open('balls.json', 'r', encoding='utf-8') as f:
         countries = json.load(f)
 
     with open('winners.json', 'r', encoding='utf-8') as f:
@@ -84,7 +84,6 @@ if __name__ == "__main__":
     state = 'game'
 
     while True:
-
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 sys.exit()
@@ -125,10 +124,8 @@ if __name__ == "__main__":
                 tournament_finished = True
                 with open("winners.json", "w", encoding="utf-8") as f:
                     json.dump(previous_winners, f, ensure_ascii=False, indent=2)
+                ranking = Ranking(previous_winners, countries[0])
 
-
-
-            ranking = Ranking(previous_winners, countries[0])
             ranking.draw(screen)
 
         space.step(1/50)

@@ -4,7 +4,7 @@ import pygame, pymunk, random, json
 
 def crear_sprite_circular(ruta_imagen, diametro):
     bandera = pygame.image.load(ruta_imagen).convert_alpha()
-    bandera = pygame.transform.scale(bandera, (diametro, diametro))
+    bandera = pygame.transform.smoothscale(bandera, (diametro, diametro))
 
     superficie_final = pygame.Surface((diametro, diametro), pygame.SRCALPHA)
     mascara = pygame.Surface((diametro, diametro), pygame.SRCALPHA)
@@ -20,7 +20,7 @@ class Ball():
     lista_objetos = []
     def __init__(self, space, pos, ruta_bandera, name):
         self.name = name
-        self.radio = 20
+        self.radio = 17
         self.body = pymunk.Body(1, 100, body_type=pymunk.Body.DYNAMIC)
         self.body.position = pos
         self.body.velocity = (random.randint(25,100), random.randint(0,50))
